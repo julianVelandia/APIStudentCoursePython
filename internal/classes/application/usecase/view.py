@@ -1,28 +1,31 @@
-from abc import ABC, abstractmethod
+from internal.classes.application.command.update import CommandUpdate
+from internal.classes.domain.classes import Classes
 
-class RepositoryViewClass:
-    def get_class_by_class_id(self, class_id):
+
+class RepositoryViewClasses:
+    def get_class_by_class_id(self, class_id: str) -> Classes:
         pass
+
 
 class RepositoryUpdateClassesDone:
-    def update_classes_by_email(self, cmd):
+    def update_classes_by_email(self, cmd: CommandUpdate):
         pass
 
-class ViewUseCase:
+
+class ClassesUseCase(RepositoryViewClasses, RepositoryUpdateClassesDone):
     def __init__(self, repository_view_class, repository_update_classes_done):
         self.repository_view_class = repository_view_class
         self.repository_update_classes_done = repository_update_classes_done
 
-    def execute(self, qry):
-        domain_class, err = self.repository_view_class.get_class_by_class_id(qry.class_id())
+    def execute(self, qry) -> Classes:
+        domain_class = self.repository_view_class.get_class_by_class_id(qry.class_id())
 
-        cmd = command.new_update(
+        cmd = CommandUpdate(
             qry.email(),
             qry.class_id(),
             qry.title()
         )
-        err = self.repository_update_classes_done.update_classes_by_email(cmd)
-        if err is not None:
-            return domain_class, err
 
-        return domain_class, None
+        self.repository_update_classes_done.update_classes_by_email(cmd)
+
+        return domain_class

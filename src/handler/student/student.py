@@ -14,13 +14,13 @@ class StudentMapper:
         pass
 
 
-class UseCase:
+class StudentUseCase:
     def execute(self, email: str) -> Profile:
         pass
 
 
-class HandlerViewProfile(StudentMapper, UseCase):
-    def __init__(self, mapper: StudentMapper, use_case: UseCase):
+class HandlerViewProfile(StudentMapper, StudentUseCase):
+    def __init__(self, mapper: StudentMapper, use_case: StudentUseCase):
         self.mapper = mapper
         self.use_case = use_case
 

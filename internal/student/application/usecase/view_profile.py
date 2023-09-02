@@ -1,19 +1,24 @@
-from dataclasses import dataclass
+from typing import List
 
-@dataclass
-class Student:
-    id: int
-    name: str
-    age: int
+from internal.student.domain.profile import Profile, Classes
 
-class StudentService:
-    def get_student_profile(self, student_id: int) -> Student:
-        # Aquí implementa la obtención de datos del estudiante desde la base de datos real o estructura de datos
+
+class RepositoryViewProfile:
+    def get_profile_by_email(self, email: str) -> Profile:
         pass
 
-class StudentUsecase:
-    def __init__(self, service: StudentService):
-        self.service = service
+    def get_classes_done_by_email(self, email: str) -> List[Classes]:
+        pass
 
-    def get_student_profile(self, student_id: int) -> Student:
-        return self.service.get_student_profile(student_id)
+
+class StudentUseCase(RepositoryViewProfile):
+    def __init__(self, repository_view_profile):
+        self.repository_view_profile = repository_view_profile
+
+    def execute(self, email: str) -> Profile:
+        domain_profile = self.get_profile_by_email(email)
+        domain_classes_done = self.get_classes_done_by_email(email)
+
+        domain_profile.set_classes_done(domain_classes_done)
+
+        return domain_profile

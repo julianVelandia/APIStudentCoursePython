@@ -14,13 +14,13 @@ class ClassesMapper:
         pass
 
 
-class UseCase:
+class ClassesUseCase:
     def execute(self, qry: View) -> Classes:
         pass
 
 
-class HandlerViewClass(ClassesMapper, UseCase):
-    def __init__(self, mapper: ClassesMapper, use_case: UseCase):
+class HandlerViewClass(ClassesMapper, ClassesUseCase):
+    def __init__(self, mapper: ClassesMapper, use_case: ClassesUseCase):
         self.mapper = mapper
         self.use_case = use_case
 

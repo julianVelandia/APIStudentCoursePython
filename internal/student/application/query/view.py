@@ -4,7 +4,3 @@ class View:
 
     def get_email(self):
         return self.email
-
-    @classmethod
-    def new_view(cls, email):
-        return cls(email)

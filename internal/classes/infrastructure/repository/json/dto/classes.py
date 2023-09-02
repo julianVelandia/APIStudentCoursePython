@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 @dataclass
-class Class:
+class ClassesDTO:
     class_id: str
     title: str
     creation_date: str
@@ -10,6 +10,6 @@ class Class:
     read_time: float
 
 @dataclass
-class ClassStudent:
+class ClassesStudentDTO:
     class_id: str
     title: str

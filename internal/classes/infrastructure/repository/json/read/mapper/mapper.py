@@ -1,18 +1,14 @@
-package mapper
+from datetime import datetime
 
-import (
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/class/domain"
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/class/infrastructure/repository/json/dto"
-)
+from internal.classes.domain.classes import Classes
 
-type Mapper struct{}
 
-func (m Mapper) DTOClassToDomain(class dto.Class) domain.Class {
-	return *domain.NewClass(
-		class.ClassID,
-		class.Title,
-		class.CreationDate,
-		class.Content,
-		class.ReadTime,
-	)
-}
+class Mapper:
+    def DTOClassToDomain(self, class_obj):
+        return Classes(
+            class_obj.ClassID,
+            class_obj.Title,
+            datetime.strptime(class_obj.CreationDate, "%Y-%m-%d"),
+            class_obj.Content,
+            class_obj.ReadTime,
+        )

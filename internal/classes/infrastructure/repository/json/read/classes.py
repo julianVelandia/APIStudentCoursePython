@@ -1,45 +1,30 @@
-package read
+import json
 
-import (
-	"encoding/json"
-	"fmt"
-	"os"
+from internal.classes.domain.classes import Classes
+from internal.classes.infrastructure.repository.json.dto.classes import ClassesDTO
 
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/class/domain"
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/class/infrastructure/repository/json/dto"
-)
 
-type Mapper interface {
-	DTOClassToDomain(class dto.Class) domain.Class
-}
+class Mapper:
+    def DTOClassToDomain(self, class_obj: ClassesDTO) -> Classes:
+        pass
 
-type ClassRepositoryRead struct {
-	mapper          Mapper
-	filenameClasses string
-}
 
-func NewClassRepositoryRead(mapper Mapper, filenameClasses string) *ClassRepositoryRead {
-	return &ClassRepositoryRead{mapper: mapper, filenameClasses: filenameClasses}
-}
+class ClassRepositoryRead(Mapper):
+    def __init__(self, mapper: Mapper, filename_classes: str):
+        self.mapper = mapper
+        self.filename_classes = filename_classes
 
-func (r ClassRepositoryRead) GetClassByClassID(classID string) (domain.Class, error) {
-	data, err := os.ReadFile(r.filenameClasses)
-	if err != nil {
-		return domain.Class{}, err
-	}
+    def GetClassByClassID(self, class_id: str) -> Classes:
+        try:
+            with open(self.filename_classes, 'r') as file:
+                class_data = json.load(file)
 
-	class := make(map[string]dto.Class)
-	err = json.Unmarshal(data, &class)
-	if err != nil {
-		return domain.Class{}, err
-	}
+            if class_id not in class_data:
+                raise Exception(f"No class found for class_id: {class_id}")
 
-	classDTO, found := class[classID]
-	if !found {
-		return domain.Class{}, fmt.Errorf("no class found for class_id: %s", classID)
-	}
+            class_dto = ClassesDTO(**class_data[class_id])
+            class_domain = self.mapper.DTOClassToDomain(class_dto)
 
-	classDone := r.mapper.DTOClassToDomain(classDTO)
-
-	return classDone, nil
-}
+            return class_domain
+        except Exception as e:
+            raise e

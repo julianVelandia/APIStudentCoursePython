@@ -1,3 +1,6 @@
+from typing import List
+
+
 class Classes:
     def __init__(self, class_id, title):
         self.class_id = class_id
@@ -8,10 +11,6 @@ class Classes:
 
     def title(self):
         return self.title
-
-    @classmethod
-    def new_class(cls, class_id, title):
-        return cls(class_id, title)
 
 
 class Profile:
@@ -29,6 +28,5 @@ class Profile:
     def classes(self):
         return self.classes()
 
-    @classmethod
-    def new_profile(cls, email, name, classes):
-        return cls(email, name, classes)
+    def set_classes_done(self, classes_done: List[Classes]):
+        self.classes = classes_done

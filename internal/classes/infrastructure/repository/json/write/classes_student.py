@@ -1,50 +1,36 @@
-package write
+import json
 
-import (
-	"encoding/json"
-	"os"
+from internal.classes.application.command.update import CommandUpdate
+from internal.classes.infrastructure.repository.json.dto.classes import ClassesStudentDTO
 
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/class/application/command"
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/class/infrastructure/repository/json/dto"
-)
 
-type Mapper interface {
-	CommandToDTOClass(cmd command.Update) dto.ClassStudent
-}
+class Mapper:
+    def CommandToDTOClass(self, cmd: CommandUpdate) -> ClassesStudentDTO:
+        return ClassesStudentDTO(
+            cmd.class_id(),
+            cmd.title(),
+        )
 
-type ClassRepositoryWrite struct {
-	mapper              Mapper
-	filenameClassesDone string
-}
 
-func NewClassRepositoryWrite(mapper Mapper, filenameClassesDone string) *ClassRepositoryWrite {
-	return &ClassRepositoryWrite{mapper: mapper, filenameClassesDone: filenameClassesDone}
-}
+class ClassRepositoryWrite(Mapper):
+    def __init__(self, mapper: Mapper, filename_classes_done: str):
+        self.mapper = mapper
+        self.filename_classes_done = filename_classes_done
 
-func (r ClassRepositoryWrite) UpdateClassesByEmail(cmd command.Update) error {
-	data, err := os.ReadFile(r.filenameClassesDone)
-	if err != nil {
-		return err
-	}
+    def UpdateClassesByEmail(self, cmd: CommandUpdate) -> None:
+        try:
+            with open(self.filename_classes_done, 'r') as file:
+                classes_done_by_user = json.load(file)
+        except FileNotFoundError:
+            classes_done_by_user = {}
 
-	classesDoneByUser := make(map[string][]dto.ClassStudent)
-	err = json.Unmarshal(data, &classesDoneByUser)
-	if err != nil {
-		return err
-	}
+        email = cmd.email()
 
-	newClass := r.mapper.CommandToDTOClass(cmd)
-	classesDoneByUser[cmd.Email()] = append(classesDoneByUser[cmd.Email()], newClass)
+        new_class = self.mapper.CommandToDTOClass(cmd)
 
-	updatedData, err := json.MarshalIndent(classesDoneByUser, "", "  ")
-	if err != nil {
-		return err
-	}
+        if email not in classes_done_by_user:
+            classes_done_by_user[email] = []
+        classes_done_by_user[email].append(new_class)
 
-	err = os.WriteFile(r.filenameClassesDone, updatedData, 0644)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+        with open(self.filename_classes_done, 'w') as file:
+            json.dump(classes_done_by_user, file, indent=2)
