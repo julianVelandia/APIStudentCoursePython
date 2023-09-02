@@ -8,7 +8,8 @@ class StudentMapper:
     @staticmethod
     def domain_to_response(profile: Profile):
         classes_done_response = []
-        for class_done in profile.classes():
+
+        for class_done in profile.get_classes():
             classes_done_response.append(
                 StudentClass(
                     class_id=class_done.class_id,

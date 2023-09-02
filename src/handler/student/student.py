@@ -1,4 +1,4 @@
-from http.client import HTTPException
+from fastapi import HTTPException
 
 from internal.student.application.query.view import View
 from internal.student.domain.profile import Profile

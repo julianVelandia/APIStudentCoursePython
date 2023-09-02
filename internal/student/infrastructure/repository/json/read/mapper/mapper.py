@@ -1,26 +1,23 @@
-package mapper
+from typing import List
 
-import (
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/student/domain"
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/student/infrastructure/repository/json/dto"
-)
+from internal.student.domain.profile import Profile, Classes
+from internal.student.infrastructure.repository.json.dto.classes import ClassesDTO
+from internal.student.infrastructure.repository.json.dto.profile import ProfileDTO
 
-type Mapper struct{}
 
-func (m Mapper) DTOProfileToDomain(email string, profile dto.Profile) domain.Profile {
-	return *domain.NewProfile(
-		email,
-		profile.Name,
-	)
-}
+class DTOStudentMapper:
+    def dto_profile_to_domain(self, email: str, profile: ProfileDTO) -> Profile:
 
-func (m Mapper) DTOClassesToDomain(classes []dto.Class) []domain.Class {
-	domainClasses := make([]domain.Class, len(classes))
-	for i := range classes {
-		domainClasses[i] = *domain.NewClass(
-			classes[i].ClassID,
-			classes[i].Title,
-		)
-	}
-	return domainClasses
-}
+        return Profile(
+                email,
+                profile['name']
+            )
+
+    def dto_classes_to_domain(self, classes: List[ClassesDTO]) -> List[Classes]:
+        domain_classes = []
+        for dto_class in classes:
+            domain_classes.append(Classes(
+                dto_class['class_id'],
+                dto_class['title'],
+            ))
+        return domain_classes

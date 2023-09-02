@@ -4,11 +4,11 @@ class CommandUpdate:
         self.class_id = class_id
         self.title = title
 
-    def email(self):
+    def get_email(self):
         return self.email
 
-    def class_id(self):
+    def get_class_id(self):
         return self.class_id
 
-    def title(self):
+    def get_title(self):
         return self.title

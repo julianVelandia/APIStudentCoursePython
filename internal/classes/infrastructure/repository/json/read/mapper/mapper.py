@@ -3,8 +3,8 @@ from datetime import datetime
 from internal.classes.domain.classes import Classes
 
 
-class Mapper:
-    def DTOClassToDomain(self, class_obj):
+class DTOClassesMapperRead:
+    def dto_class_to_domain(self, class_obj):
         return Classes(
             class_obj.ClassID,
             class_obj.Title,

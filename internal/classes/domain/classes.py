@@ -6,21 +6,18 @@ class Classes:
         self.content = content
         self.read_time = read_time
 
-    def class_id(self):
+    def get_class_id(self):
         return self.class_id
 
-    def title(self):
+    def get_title(self):
         return self.title
 
-    def creation_date(self):
+    def get_creation_date(self):
         return self.creation_date
 
-    def content(self):
+    def get_content(self):
         return self.content
 
-    def read_time(self):
+    def get_read_time(self):
         return self.read_time
 
-    @classmethod
-    def new_class(cls, class_id, title, creation_date, content, read_time):
-        return cls(class_id, title, creation_date, content, read_time)

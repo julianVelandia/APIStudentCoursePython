@@ -14,19 +14,19 @@ class Classes:
 
 
 class Profile:
-    def __init__(self, email, name, classes):
+    def __init__(self, email, name):
         self.email = email
         self.name = name
-        self.classes = classes
+        self.classes = []
 
-    def email(self):
+    def get_email(self):
         return self.email
 
-    def name(self):
+    def get_name(self):
         return self.name
 
-    def classes(self):
-        return self.classes()
+    def get_classes(self):
+        return self.classes
 
-    def set_classes_done(self, classes_done: List[Classes]):
+    def set_classes_done(self, classes_done):
         self.classes = classes_done

@@ -1,31 +1,28 @@
-package read
+import json
+from typing import List
 
-import (
-	"encoding/json"
-	"os"
+from internal.student.domain.profile import Classes
+from internal.student.infrastructure.repository.json.dto.classes import ClassesDTO
 
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/student/domain"
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/student/infrastructure/repository/json/dto"
-)
 
-func (r ProfileRepositoryRead) GetClassesDoneByEmail(email string) ([]domain.Class, error) {
-	data, err := os.ReadFile(r.filenameClassesDone)
-	if err != nil {
-		return []domain.Class{}, err
-	}
+class DTOStudentMapper:
+    def dto_classes_to_domain(self, classes: List[ClassesDTO]) -> List[Classes]:
+        pass
 
-	classesDoneByUser := make(map[string][]dto.Class)
-	err = json.Unmarshal(data, &classesDoneByUser)
-	if err != nil {
-		return []domain.Class{}, err
-	}
 
-	classesDTO, found := classesDoneByUser[email]
-	if !found {
-		return []domain.Class{}, nil
-	}
+class ClassesDoneRepositoryRead(DTOStudentMapper):
+    def __init__(self, mapper: DTOStudentMapper, filename_classes_done: str):
+        self.filename_classes_done = filename_classes_done
+        self.mapper = mapper
 
-	classesDone := r.mapper.DTOClassesToDomain(classesDTO)
+    def get_classes_done_by_email(self, email: str) -> List[Classes]:
+        try:
+            with open(self.filename_classes_done, 'r', encoding='utf-8') as file:
+                classes_done_by_user = json.load(file)
+        except FileNotFoundError:
+            return []
 
-	return classesDone, nil
-}
+        classes_dto = classes_done_by_user.get(email, [])
+        classes_done = self.mapper.dto_classes_to_domain(classes_dto)
+
+        return classes_done

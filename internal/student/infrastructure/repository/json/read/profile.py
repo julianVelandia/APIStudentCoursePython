@@ -1,47 +1,32 @@
-package read
+import json
 
-import (
-	"encoding/json"
-	"fmt"
-	"os"
+from internal.student.domain.profile import Profile
+from internal.student.infrastructure.repository.json.dto.profile import ProfileDTO
 
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/student/domain"
-	"github.com/julianVelandia/EDteam/SOLIDyHexagonal/ProyectoCurso/internal/student/infrastructure/repository/json/dto"
-)
 
-type Mapper interface {
-	DTOProfileToDomain(email string, profile dto.Profile) domain.Profile
-	DTOClassesToDomain(classes []dto.Class) []domain.Class
-}
+class DTOStudentMapper:
+    def dto_profile_to_domain(self, email: str, profile: ProfileDTO) -> Profile:
+        pass
 
-type ProfileRepositoryRead struct {
-	mapper              Mapper
-	filenameProfile     string
-	filenameClassesDone string
-}
 
-func NewProfileRepositoryRead(mapper Mapper, filenameProfile string, filenameClassesDone string) *ProfileRepositoryRead {
-	return &ProfileRepositoryRead{mapper: mapper, filenameProfile: filenameProfile, filenameClassesDone: filenameClassesDone}
-}
+class ProfileRepositoryRead(DTOStudentMapper):
+    def __init__(self, mapper: DTOStudentMapper, filename_profile: str):
+        self.mapper = mapper
+        self.filename_profile = filename_profile
 
-func (r ProfileRepositoryRead) GetProfileByEmail(email string) (domain.Profile, error) {
-	data, err := os.ReadFile(r.filenameProfile)
-	if err != nil {
-		return domain.Profile{}, err
-	}
+    def get_profile_by_email(self, email: str) -> Profile:
+        try:
+            with open(self.filename_profile, 'r', encoding='utf-8') as file:
+                profiles = json.load(file)
 
-	profiles := make(map[string]dto.Profile)
-	err = json.Unmarshal(data, &profiles)
-	if err != nil {
-		return domain.Profile{}, err
-	}
+        except FileNotFoundError:
+            raise Exception(f"Profile not found for email: {email}")
 
-	foundProfileDTO, found := profiles[email]
-	if !found {
-		return domain.Profile{}, fmt.Errorf("profile not found for email: %s", email)
-	}
+        found_profile_dto = profiles.get(email)
 
-	foundProfile := r.mapper.DTOProfileToDomain(email, foundProfileDTO)
+        if not found_profile_dto:
+            raise Exception(f"Profile not found for email: {email}")
 
-	return foundProfile, nil
-}
+        found_profile = self.mapper.dto_profile_to_domain(email, found_profile_dto)
+
+        return found_profile
